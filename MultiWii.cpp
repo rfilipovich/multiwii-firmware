@@ -911,9 +911,17 @@ void loop () {
         errorAngleI[ROLL] = 0; errorAngleI[PITCH] = 0;
       #endif
       if (conf.activate[BOXARM] > 0) {             // Arming/Disarming via ARM BOX
-        if ( rcOptions[BOXARM] && f.OK_TO_ARM ) go_arm(); else if (f.ARMED) go_disarm();
-      }
-    }
+        if ( rcOptions[BOXARM] && f.OK_TO_ARM ) go_arm(); 
+          #ifndef DISARM_without_THR //Modification
+            else if (f.ARMED) go_disarm();
+          #endif
+      }}
+      
+    #ifdef DISARM_without_THR   //disarm without low throttle //Modification
+      if (conf.activate[BOXARM] > 0) {             
+        if ( !rcOptions[BOXARM] && f.ARMED) go_disarm();}
+    #endif
+   
     if(rcDelayCommand == 20) {
       if(f.ARMED) {                   // actions during armed
         #ifdef ALLOW_ARM_DISARM_VIA_TX_YAW
